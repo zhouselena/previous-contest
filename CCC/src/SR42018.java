@@ -4,15 +4,32 @@ import java.util.Scanner;
 
 public class SR42018 {
 	
-	public Map<Integer, Integer> weightTree = new HashMap<Integer, Integer>();
+	public Map<Integer, Long> weightTree = new HashMap<Integer, Long>();
 	
-	public int howManyTree(int weight) {
+	public long howManyTree(int weight) {
+		if (weight==1)	return 1;
 		if (weightTree.containsKey(weight)) 
 			return weightTree.get(weight);
 
-		int totalCount = 0;
-		for (int i = weight; i >=2; i--) {
-			int value = howManyTree(weight/i);
+		long totalCount = (weight+1)/2;  // this is the count of (child weight == 1) ;
+		
+/*		int childWeight = 2 ;
+		while(childWeight<=weight/2) {
+			if ((childWeight+1)*2 > weight)
+			{
+				totalCount += (weight/childWeight-1) * howManyTree(childWeight) ;
+				break;
+			}
+			else
+			{
+				int count = weight/childWeight - weight/(childWeight+1) ;
+				totalCount += (count*howManyTree(childWeight));
+				childWeight++;
+			}
+		}
+*/
+		for (int i = weight/2; i >=2; i--) {
+			long value = howManyTree(weight/i);
 			totalCount += value;
 		}
 		weightTree.put(weight, totalCount);
@@ -25,7 +42,7 @@ public class SR42018 {
 		
 		int wei = sc.nextInt();
 		SR42018 tree = new SR42018();
-		tree.weightTree.put(1, 1);
+		tree.weightTree.put(1, (long) 1);
 		System.out.println(tree.howManyTree(wei));
 		
 		sc.close();
