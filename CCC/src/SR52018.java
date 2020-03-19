@@ -47,6 +47,9 @@ public class SR52018 {
 	public int P = 0;
 	public int Q = 0;
 	
+	public long totalCost = 0;
+	
+	@SuppressWarnings("unchecked")
 	public SR52018(int n, int m, int p, int q) {
 		M = m;
 		N = n;
@@ -66,6 +69,7 @@ public class SR52018 {
 			transport[i][city1].add(new Flight(galaxy[i][city1], galaxy[i][city2], cost));
 			transport[i][city2].add(new Flight(galaxy[i][city2], galaxy[i][city1], cost));
 		}
+		totalCost += (N*(long)cost);
 	}
 	
 	public void addPortal(int planet1, int planet2, int cost) {
@@ -73,10 +77,11 @@ public class SR52018 {
 			transport[planet1][i].add(new Flight(galaxy[planet1][i], galaxy[planet2][i], cost));
 			transport[planet2][i].add(new Flight(galaxy[planet2][i], galaxy[planet1][i], cost));
 		}
+		totalCost += (M*(long)cost);
 	}
 	
-	public int findMinimalSpinningTree() {
-		int weight = 0;
+	public long findMinimalSpinningTree() {
+		long weight = 0;
 		PriorityQueue<Flight> edges = new PriorityQueue<Flight>(N*P+M*Q, new FlightComparator());
 		Set<City> included = new HashSet<City>();
 		
@@ -105,18 +110,6 @@ public class SR52018 {
 				queue.add(fly);
 		}
 	}
-	
-	public int totalCost() {
-		int total = 0;
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				for (int k = 0; k < transport[i][j].size(); k++) {
-					total += transport[i][j].get(k).cost;
-				}
-			}
-		}
-		return total/2;
-	}
 
 	public static void main(String[] args) {
 		
@@ -136,10 +129,10 @@ public class SR52018 {
 			game.addPortal(sc.nextInt()-1, sc.nextInt()-1, sc.nextInt());
 		}
 		
-		int weight = game.findMinimalSpinningTree();
-		int total = game.totalCost();
+		long weight = game.findMinimalSpinningTree();
+		long total = game.totalCost;
 		
-		int save = total - weight ;
+		long save = total - weight ;
 		System.out.println(save);
 		
 		sc.close();
