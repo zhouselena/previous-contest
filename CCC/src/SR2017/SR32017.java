@@ -21,8 +21,8 @@ public class SR32017 {
 		int currentLength = 1;
 
 		for (int i = indexStart+1; i < indexStart+((indexEnd-indexStart+1)/2); i++) {
-			if (i != (indexEnd-i)) {
-				currentHeight = woodPieces[i] + woodPieces[indexEnd-i];
+			if (i != (indexStart+indexEnd-i)) {
+				currentHeight = woodPieces[i] + woodPieces[indexStart+indexEnd-i];
 				if (currentHeight == height) {
 					currentLength++;
 				}
