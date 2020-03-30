@@ -13,25 +13,20 @@ public class SR42018 {
 
 		long totalCount = (weight+1)/2;  // this is the count of (child weight == 1) ;
 		
-/*		int childWeight = 2 ;
-		while(childWeight<=weight/2) {
-			if ((childWeight+1)*2 > weight)
-			{
-				totalCount += (weight/childWeight-1) * howManyTree(childWeight) ;
-				break;
-			}
-			else
-			{
-				int count = weight/childWeight - weight/(childWeight+1) ;
-				totalCount += (count*howManyTree(childWeight));
-				childWeight++;
-			}
-		}
-*/
+		int sqrtW = (int)(Math.sqrt(weight));
+		
+		for (int childWeight = 2; childWeight<=sqrtW; childWeight++)
+			totalCount += (weight/childWeight-weight/(childWeight+1)) * howManyTree(childWeight) ;
+		
+		for (int i=2; weight/i>sqrtW; i++)
+			totalCount += howManyTree(weight/i);
+	
+/*
 		for (int i = weight/2; i >=2; i--) {
 			long value = howManyTree(weight/i);
 			totalCount += value;
 		}
+*/
 		weightTree.put(weight, totalCount);
 		return totalCount;
 	}
