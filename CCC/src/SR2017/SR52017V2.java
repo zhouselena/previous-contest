@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
 
-public class SR52018V2 {
+public class SR52017V2 {
 	
 	public List<Integer>[] lines;
 	public int[] stations;
@@ -15,7 +15,7 @@ public class SR52018V2 {
 	public int startPos;
 	
 	@SuppressWarnings("unchecked")
-	public SR52018V2(int n, int m) {
+	public SR52017V2(int n, int m) {
 		this.N = n;
 		this.M = m;
 		this.stations = new int[N];
@@ -78,7 +78,7 @@ public class SR52018V2 {
 			numbPeople[i] = sc.nextInt();
 		}
 		
-		SR52018V2 game = new SR52018V2(numbStations, numbLine);
+		SR52017V2 game = new SR52017V2(numbStations, numbLine);
 		
 		for (int i = 0; i < numbStations; i++) {
 			game.addStationToLine(stationsLines[i], numbPeople[i], i);
