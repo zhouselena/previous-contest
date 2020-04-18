@@ -1,106 +1,350 @@
 package SR2017;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
 import java.util.Scanner;
 
 public class SR52017V3 {
 	
-	public List<Integer>[] lines;
-	public int[] stations;
-	public int[] sumPeople;
-	public int N;
-	public int M;
-	public int startPos;
+	/*
+	 * 10 2 Q
+	 * 1 1 1 1 1 2 2 2 2 2
+	 * 1 2 3 4 5 6 7 8 9 10
+	 * 1 1 4 (1+2+3+4)
+	 * 1 7 9 (7+8+9)
+	 * 1 9 2 (9+10+1+2)
+	 * 1 4 7 (4+5+6+7)
+	 * 2 1
+	 * 1 4 7 (3+4+6+7)
+	 * 2 1
+	 * 1 4 7 (2+3+6+7)
+	 * 1 9 2 (9+10+4+5)
+	 * 2 1
+	 * 1 4 7 (1+2+6+7)
+	 * 2 1
+	 * 2 1
+	 * 1 4 7 (4+5+6+7)
+	 */
 	
-	@SuppressWarnings("unchecked")
-	public SR52017V3(int n, int m) {
-		this.N = n;
-		this.M = m;
-		this.stations = new int[N];
-		this.sumPeople = new int[N];
-		this.lines = new ArrayList[M];
-		for (int i = 0; i < M; i++) {
-			lines[i] = new ArrayList<Integer>();
-		}
-		this.startPos = 0;
+	interface RMT{
+		void stationLine(int[] stationLine);
+		void addStationsToLine(int[] passengers);
+		void run(int line);
+		int survey(int from, int to);
 	}
 	
-	public void addStationToLine(int line, int numbPeople, int index) {
-		lines[line].add(index);
-		stations[index] = numbPeople;
-	}
-	
-	public int surveyAnswer(int from, int to) {
+	public class case2 implements RMT{
 		
-		for (int i = startPos; i <= to; i++) {
-			if (i==0) {
-				sumPeople[i] = stations[i];
+		public class Line{
+			
+			public int firstStation = -1;
+			public int startPos = 0;
+			public int totalSum = 0;
+			public int totalStations = 0;
+			public ArrayList<Integer> stationSum;
+			
+			public Line() {
+				this.stationSum = new ArrayList<Integer>();
+			}
+			
+			public void addStation(int numbPassengers, int statNumb) {
+				if (firstStation == -1) {
+					firstStation = statNumb;
+					stationSum.add(numbPassengers);
+				}
+				else {
+					int sum = stationSum.get(stationSum.size()-1) + numbPassengers;
+					stationSum.add(sum);
+				}
+				totalSum += numbPassengers;
+				totalStations++;
+			}
+			
+			public int returnRangeSum(int from, int to) {
+				from = from - firstStation;
+				to = to - firstStation;
+				int sum = 0;
+				int realFromIndex = (from - startPos + totalStations) % totalStations;
+				int realToIndex = (to - startPos + totalStations) % totalStations;
+				if (realToIndex >= realFromIndex) {
+					sum = stationSum.get(realToIndex) - (realFromIndex==0?0:stationSum.get(realFromIndex-1));
+				}
+				else {
+					int tempSum = stationSum.get(realFromIndex-1) - stationSum.get(realToIndex);
+					sum = totalSum - tempSum;
+				}
+				return sum;
+			}
+			
+		}
+		
+		private int N;
+		private int M;
+		private int Q;
+		public Line[] lines;
+		public int[] stationLines;
+		
+		public case2(int numbStations, int numbLines, int numbActions) {
+			this.N = numbStations;
+			this.M = numbLines;
+			this.Q = numbActions;
+			this.lines = new Line[M];
+			this.stationLines = new int[N];
+			lines = new Line[numbLines];
+			for (int i = 0; i < numbLines; i++) {
+				lines[i] = new Line();
+			}
+		}
+		
+		@Override
+		public void run(int line) {
+			lines[line].startPos = (lines[line].startPos+1) % lines[line].totalStations;
+		}
+		@Override
+		public int survey(int from, int to) {
+  			int totalPassengers = 0;
+			
+			int fromLine = stationLines[from];
+			int toLine = stationLines[to];
+			
+			if (fromLine != toLine) {
+				totalPassengers += lines[fromLine].returnRangeSum(from, lines[fromLine].totalStations-1+lines[fromLine].firstStation);
+				totalPassengers += lines[toLine].returnRangeSum(lines[fromLine].firstStation, to);
+				
+				int i = fromLine+1;
+				while (i < toLine) {
+					totalPassengers += lines[i].totalSum;
+					i++;
+				}
 			}
 			else {
-				sumPeople[i] = stations[i] + sumPeople[i-1];
+				totalPassengers += lines[fromLine].returnRangeSum(from, to);
+			}
+			
+			return totalPassengers;
+		}
+
+		@Override
+		public void stationLine(int[] stationLine) {
+			System.arraycopy(stationLine, 0, stationLines, 0, N);
+		}
+
+		@Override
+		public void addStationsToLine(int[] passengers) {
+			for (int i = 0; i < passengers.length; i++) {
+				lines[stationLines[i]].addStation(passengers[i], i);
 			}
 		}
-		if (startPos <= to) {
-			startPos = to+1;
+	}
+	
+	public class case3 implements RMT{
+
+		public class Line{
+			
+			public int startPos = 0;
+			public int totalStations = 0;
+			public int totalSum = 0;
+			public ArrayList<Integer> stationSum = null;
+			public ArrayList<Integer> stations = null;
+			
+			public Line() {
+				stationSum = new ArrayList<Integer>();
+				stations = new ArrayList<Integer>();
+			}
+			
+			public void addStation(int numbPassengers, int statNumb) {
+				if (stations.isEmpty()) {
+					stationSum.add(numbPassengers);
+				}
+				else {
+					stationSum.add(stationSum.get(totalStations-1)+numbPassengers);
+				}
+				stations.add(statNumb);
+				totalStations++;
+				totalSum += numbPassengers;
+			}
+			
+			public int findFirstIndex(int find) {
+				if (stations.get(0) > find || stations.get(0) == find) {
+					return 0;
+				}
+				else if (stations.get(stations.size()-1) < find) {
+					return -1;
+				}
+				else if (stations.get(stations.size()-1) == find) {
+					return stations.size()-1;
+				}
+				
+				int index = -1;
+				int leftInd = 0;
+				int rightInd = stations.size()-1;
+				while (leftInd < rightInd-1) {
+					int middle = (leftInd+rightInd)/2;
+					if (stations.get(middle)==find) {
+						index = middle;
+						break;
+					}
+					else if (stations.get(middle) > find) {
+						rightInd = middle;
+					}
+					else {
+						leftInd = middle;
+					}
+				}
+				if (index==-1) {
+					index = rightInd;
+				}
+				
+				return index;
+			}
+			
+			public int findLastIndex(int find) {
+				if (stations.get(0) > find) {
+					return -1;
+				}
+				else if (stations.get(stations.size()-1) <= find) {
+					return stations.size()-1;
+				}
+				else if (stations.get(0) == find) {
+					return 0;
+				}
+				
+				int index = -1;
+				int leftInd = 0;
+				int rightInd = stations.size()-1;
+				while (leftInd < rightInd-1) {
+					int middle = (leftInd+rightInd)/2;
+					if (middle==find) {
+						index = middle;
+						break;
+					}
+					else if (middle > find) {
+						rightInd = middle;
+					}
+					else {
+						leftInd = middle;
+					}
+				}
+				if (index==-1) {
+					index = leftInd;
+				}
+				return index;
+			}
+			
+			public int sumFromRange(int from, int to) {
+				from = from - stations.get(0);
+				to = to - stations.get(0);
+				int sum = 0;
+				int realFromIndex = (from - startPos + totalStations) % totalStations;
+				int realToIndex = (to - startPos + totalStations) % totalStations;
+				if (realToIndex >= realFromIndex) {
+					sum = stationSum.get(realToIndex) - (realFromIndex==0?0:stationSum.get(realFromIndex-1));
+				}
+				else {
+					int tempSum = stationSum.get(realFromIndex-1) - stationSum.get(realToIndex);
+					sum = totalSum - tempSum;
+				}
+				return sum;
+			}
+			
 		}
 		
-		return sumPeople[to] - (from==0?0:sumPeople[from-1]);
+		private int N=0;
+		private int M=0;
+		private int Q=0;
+		public Line[] lines;
+		public int[] stationBelongToLine;
+		
+		public case3(int n, int m, int q) {
+			this.N = n;
+			this.M = m;
+			this.Q = q;
+			lines = new Line[M];
+			stationBelongToLine = new int[N];
+			for (int i = 0; i < M; i++) {
+				lines[i] = new Line();
+			}
+		}
+		
+		@Override
+		public void stationLine(int[] stationLine) {
+			System.arraycopy(stationLine, 0, stationBelongToLine, 0, N);
+			
+		}
+
+		@Override
+		public void addStationsToLine(int[] passengers) {
+			for (int i = 0; i < N; i++) {
+				lines[stationBelongToLine[i]].addStation(passengers[i], i);
+			}
+			
+		}
+
+		@Override
+		public void run(int line) {
+			lines[line].startPos = (lines[line].startPos + 1)%lines[line].totalStations;
+		}
+
+		@Override
+		public int survey(int from, int to) {
+			int sum = 0;
+			
+			for (int i = 0; i < M; i++) {
+				Line current = lines[i];
+				int startInd = current.findFirstIndex(from);
+				int endInd = current.findFirstIndex(to);
+				if (startInd == -1 || endInd == -1) {
+					continue;
+				}
+				else {
+					sum += current.sumFromRange(startInd, endInd);
+				}
+			}
+			
+			return sum;
+		}
 		
 	}
 	
-	public void operate(int line) {
-		int temp = stations[lines[line].get(lines[line].size()-1)];
-		for (int i = lines[line].size()-1; i>0; i--) {
-			stations[lines[line].get(i)] = stations[lines[line].get(i-1)];
+	public void run() {
+		Scanner sc = new Scanner(System.in);
+		
+		int n = sc.nextInt();
+		int m = sc.nextInt();
+		int q = sc.nextInt();
+		
+		int[] belongToLines = new int[n];
+		for (int i = 0; i < n; i++) {
+			belongToLines[i] = sc.nextInt()-1;
 		}
-		stations[lines[line].get(0)] = temp;
-		if (startPos > lines[line].get(0)) {
-			startPos = lines[line].get(0);
+		
+		int[] passengersInStations = new int[n];
+		for (int i = 0; i < n; i++) {
+			passengersInStations[i] = sc.nextInt();
 		}
+		
+		RMT simulator = new case3(n, m, q);
+		
+		simulator.stationLine(belongToLines);
+		simulator.addStationsToLine(passengersInStations);
+		
+		for (int i = 0; i < q; i++) {
+			int command = sc.nextInt();
+			if (command==1) {
+				System.out.println(simulator.survey(sc.nextInt()-1, sc.nextInt()-1));
+			}
+			else {
+				simulator.run(sc.nextInt()-1);
+			}
+		}
+		
+		sc.close();
+	
 	}
 	
 	public static void main(String[] args) {
 
-		Scanner sc = new Scanner(System.in);
-		
-		int numbStations = sc.nextInt();
-		int numbLine = sc.nextInt();
-		int numbActions = sc.nextInt();
-		
-		int[] stationsLines = new int[numbStations];
-		for (int i = 0; i < numbStations; i++) {
-			stationsLines[i] = sc.nextInt()-1;
-		}
-		int[] numbPeople = new int[numbStations];
-		for (int i = 0; i < numbStations; i++) {
-			numbPeople[i] = sc.nextInt();
-		}
-		
-		SR52017V3 game = new SR52017V3(numbStations, numbLine);
-		
-		for (int i = 0; i < numbStations; i++) {
-			game.addStationToLine(stationsLines[i], numbPeople[i], i);
-		}
-		
-		List<Integer> toPrint = new ArrayList<Integer>();
-		
-		for (int i = 0; i < numbActions; i++) {
-			if (sc.nextInt()==1) {
-				toPrint.add(game.surveyAnswer(sc.nextInt()-1, sc.nextInt()-1));
-			}
-			else {
-				game.operate(sc.nextInt()-1);
-			}
-		}
-		
-		for (int print: toPrint) {
-			System.out.println(print);
-		}
-		
-		sc.close();
-		
+		SR52017V3 game = new SR52017V3();
+		game.run();		
 	}
 
 }
