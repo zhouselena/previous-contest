@@ -276,7 +276,6 @@ public class SR52017V3 {
 			for (int i = 0; i < N; i++) {
 				lines[stationBelongToLine[i]].addStation(passengers[i], i);
 			}
-			
 		}
 
 		@Override
@@ -301,6 +300,91 @@ public class SR52017V3 {
 			}
 			
 			return sum;
+		}
+		
+	}
+	
+	public class case4 implements RMT{
+
+		final int BLOCKSIZE = 200;
+		private int N;
+		private int M;
+		private int Q;
+		
+		private int[] stationBelongsToLine;
+		private int[] passengersInStation;
+		private int[] blockSum;
+		private ArrayList<Integer>[] lines;
+		
+		public case4(int n, int m) {
+			this.N = n;
+			this.M = m;
+			stationBelongsToLine = new int[N];
+			passengersInStation = new int[N];
+			blockSum = new int[N/BLOCKSIZE+1];
+			lines = new ArrayList[M];
+			for (int i = 0; i < M; i++) {
+				lines[i] = new ArrayList<Integer>();
+			}
+		}
+		
+		@Override
+		public void stationLine(int[] stationLine) {
+			for (int i = 0; i < N; i++) {
+				stationBelongsToLine[i] = stationLine[i];
+				lines[stationBelongsToLine[i]].add(i);
+			}
+			
+		}
+
+		@Override
+		public void addStationsToLine(int[] passengers) {
+			for (int i = 0; i < N; i++) {
+				passengersInStation[i] = passengers[i];
+				blockSum[i/BLOCKSIZE] += passengers[i];
+			}
+			
+		}
+
+		@Override
+		public void run(int line) {
+			int lastStatPass = passengersInStation[lines[line].get(lines[line].size()-1)];
+			for (int i = lines[line].size()-1; i > 0; i--) {
+				blockSum[lines[line].get(i)/BLOCKSIZE] -= passengersInStation[lines[line].get(i)];
+				passengersInStation[lines[line].get(i)] = passengersInStation[lines[line].get(i-1)];
+				blockSum[lines[line].get(i)/BLOCKSIZE] += passengersInStation[lines[line].get(i)];
+			}
+			blockSum[lines[line].get(0)/BLOCKSIZE] -= passengersInStation[lines[line].get(0)];
+			passengersInStation[lines[line].get(0)] = lastStatPass;
+			blockSum[lines[line].get(0)/BLOCKSIZE] += passengersInStation[lines[line].get(0)];
+		}
+
+		@Override
+		public int survey(int from, int to) {
+			int total = 0;
+			
+			if (from/BLOCKSIZE == to/BLOCKSIZE) {
+				for (int i = from; i < to; i++) {
+					total += passengersInStation[i];
+				}
+			}
+			else {
+				int i = from;
+				while (i % BLOCKSIZE != 0) {
+					total += passengersInStation[i];
+					i++;
+				}
+				while ((i/BLOCKSIZE)+1 <= to/BLOCKSIZE) {
+					total += blockSum[i/BLOCKSIZE];
+					i += BLOCKSIZE;
+				}
+				while (i <= to) {
+					total += passengersInStation[i];
+					i++;
+				}
+			}
+			
+			return total;
 		}
 		
 	}
