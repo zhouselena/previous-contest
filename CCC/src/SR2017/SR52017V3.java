@@ -406,7 +406,29 @@ public class SR52017V3 {
 			passengersInStations[i] = sc.nextInt();
 		}
 		
-		RMT simulator = new case3(n, m, q);
+		RMT simulator = new case2(n, m, q);
+		/*
+		if (n <= 1000 && q <= 1000) {
+			//make case one lol
+		}
+		else if (m <= 200) {
+			simulator = new case3(n, m, q);
+		}
+		else {
+			boolean case2 = true;
+			int previous = belongToLines[0];
+			for (int i: belongToLines) {
+				if (i<previous) {
+					case2 = false;
+					simulator = new case4(n, m);
+					break;
+				}
+			}
+			if (case2) {
+				simulator = new case2(n, m, q);
+			}
+		}
+		*/
 		
 		simulator.stationLine(belongToLines);
 		simulator.addStationsToLine(passengersInStations);
