@@ -1,6 +1,7 @@
 package SR2017;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class SR52017V3 {
@@ -30,6 +31,74 @@ public class SR52017V3 {
 		void addStationsToLine(int[] passengers);
 		void run(int line);
 		int survey(int from, int to);
+	}
+	
+	public class case1 implements RMT{
+
+		public List<Integer>[] lines;
+		public int[] stationBelongToLines;
+		public int[] stations;
+		public int[] sumPeople;
+		public int N;
+		public int M;
+		public int startPos;
+		
+		public case1(int n, int m, int q) {
+			this.N = n;
+			this.M = m;
+			this.stations = new int[N];
+			this.sumPeople = new int[N];
+			this.lines = new ArrayList[M];
+			this.stationBelongToLines = new int[N];
+			for (int i = 0; i < M; i++) {
+				lines[i] = new ArrayList<Integer>();
+			}
+			this.startPos = 0;
+		}
+		
+		@Override
+		public void stationLine(int[] stationLine) {
+			this.stationBelongToLines = stationLine;
+			
+		}
+
+		@Override
+		public void addStationsToLine(int[] passengers) {
+			stations = passengers;
+			for (int i = 0; i < N; i++) {
+				lines[stationBelongToLines[i]].add(i);
+			}
+		}
+
+		@Override
+		public void run(int line) {
+			int temp = stations[lines[line].get(lines[line].size()-1)];
+			for (int i = lines[line].size()-1; i>0; i--) {
+				stations[lines[line].get(i)] = stations[lines[line].get(i-1)];
+			}
+			stations[lines[line].get(0)] = temp;
+			if (startPos > lines[line].get(0)) {
+				startPos = lines[line].get(0);
+			}
+		}
+
+		@Override
+		public int survey(int from, int to) {
+			for (int i = startPos; i <= to; i++) {
+				if (i==0) {
+					sumPeople[i] = stations[i];
+				}
+				else {
+					sumPeople[i] = stations[i] + sumPeople[i-1];
+				}
+			}
+			if (startPos <= to) {
+				startPos = to+1;
+			}
+			
+			return sumPeople[to] - (from==0?0:sumPeople[from-1]);
+		}
+		
 	}
 	
 	public class case2 implements RMT{
@@ -213,11 +282,11 @@ public class SR52017V3 {
 				int rightInd = stations.size()-1;
 				while (leftInd < rightInd-1) {
 					int middle = (leftInd+rightInd)/2;
-					if (middle==find) {
+					if (stations.get(middle)==find) {
 						index = middle;
 						break;
 					}
-					else if (middle > find) {
+					else if (stations.get(middle) > find) {
 						rightInd = middle;
 					}
 					else {
@@ -231,8 +300,6 @@ public class SR52017V3 {
 			}
 			
 			public int sumFromRange(int from, int to) {
-				from = from - stations.get(0);
-				to = to - stations.get(0);
 				int sum = 0;
 				int realFromIndex = (from - startPos + totalStations) % totalStations;
 				int realToIndex = (to - startPos + totalStations) % totalStations;
@@ -290,7 +357,7 @@ public class SR52017V3 {
 			for (int i = 0; i < M; i++) {
 				Line current = lines[i];
 				int startInd = current.findFirstIndex(from);
-				int endInd = current.findFirstIndex(to);
+				int endInd = current.findLastIndex(to);
 				if (startInd == -1 || endInd == -1) {
 					continue;
 				}
@@ -306,7 +373,7 @@ public class SR52017V3 {
 	
 	public class case4 implements RMT{
 
-		final int BLOCKSIZE = 200;
+		final int BLOCKSIZE = 400;
 		private int N;
 		private int M;
 		private int Q;
@@ -406,10 +473,10 @@ public class SR52017V3 {
 			passengersInStations[i] = sc.nextInt();
 		}
 		
-		RMT simulator = new case2(n, m, q);
-		/*
+		RMT simulator = null;
+		
 		if (n <= 1000 && q <= 1000) {
-			//make case one lol
+			simulator = new case1(n, m, q);
 		}
 		else if (m <= 200) {
 			simulator = new case3(n, m, q);
@@ -428,7 +495,6 @@ public class SR52017V3 {
 				simulator = new case2(n, m, q);
 			}
 		}
-		*/
 		
 		simulator.stationLine(belongToLines);
 		simulator.addStationsToLine(passengersInStations);
