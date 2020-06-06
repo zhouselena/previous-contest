@@ -50,12 +50,8 @@ public class SR42016V2 {
 			else if (weightIA > weightBJ){
 				b--;
 			}
-			else if (weightIA==weightBJ && b-a==1) {
-				merged[i][j] = 1;
-				break;
-			}
 			else {
-				if (merged[a][b] == 1) {
+				if (merged[a+1][b-1] == 1) {
 					merged[i][j] = 1;
 					break;
 				}
@@ -69,8 +65,8 @@ public class SR42016V2 {
 	
 	public void merge() {
 		
-		for (int k = 1; k < N-1; k++) {
-			for (int i = 0; i < N; i++) {
+		for (int k = 1; k < N; k++) {
+			for (int i = 0; i < N-1; i++) {
 				int j = i+k;
 				if (j >= N) {
 					break;
