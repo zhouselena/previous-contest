@@ -1,6 +1,5 @@
 package SR2016;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SR52016 {
@@ -21,8 +20,8 @@ public class SR52016 {
 	public void generation() {
 		for (int i = 0; i < numbCells; i++) {
 			
-			int indBefore = ((i-1)+numbCells) % numbCells;
-			int indAfter = ((i+1)-numbCells) % numbCells;
+			int indBefore = (i-1+numbCells)%numbCells;
+			int indAfter = (i+1)%numbCells;
 			
 			/* 2 = 1 before, 0 now
 			 * 3 = 0 before, 1 now */
@@ -51,12 +50,12 @@ public class SR52016 {
 		}
 	}
 	
-	public String run() {
+	public int[] run() {
 		for (int i = 0; i < numbGen; i++) {
 			generation();
 			reset();
 		}
-		return values.toString();
+		return values;
 	}
 	
 	public static void main(String[] args) {
@@ -64,10 +63,14 @@ public class SR52016 {
 		
 		int cells = sc.nextInt();
 		int gens = sc.nextInt();
+		sc.nextLine();
 		String line = sc.nextLine();
 		
 		SR52016 game = new SR52016(cells, gens, line);
-		System.out.println(game.run());
+		int[] print = game.run();
+		for (int pr: print) {
+			System.out.print(pr);
+		}
 		
 		sc.close();
 	}
