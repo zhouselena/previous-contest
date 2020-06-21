@@ -19,7 +19,12 @@ public class SR52016V2 {
 	
 	private int[] reset(int[] cells) {
 		for (int i = 0; i < numbCells; i++) {
-			cells[i] = cells[i]%2;
+			if (cells[i]==2) {
+				cells[i] = 1;
+			}
+			else if (cells[i]==3) {
+				cells[i] = 0;
+			}
 		}
 		return cells;
 	}
@@ -34,8 +39,8 @@ public class SR52016V2 {
 			}
 			int indAfter = (i+gens)%numbCells;
 			
-			/* 2 = 1 before, 0 now
-			 * 3 = 0 before, 1 now */
+			/* 2 = 0 before, 1 now
+			 * 3 = 1 before, 0 now */
 			
 			int valueBefore = zero[indBefore]%2;
 			int valueAfter = zero[indAfter]%2;
@@ -43,25 +48,43 @@ public class SR52016V2 {
 			int now = valueBefore^valueAfter;
 			
 			if (zero[i]==0 && now==1) {
-				zero[i] = 3;
+				zero[i] = 2;
 			}
 			else if (zero[i]==1 && now==0) {
-				zero[i] = 2;
+				zero[i] = 3;
 			}
 		}
 		
 		return reset(zero);
 	}
 	
+	public int[] run() {
+		
+		int[] usingCells = this.values;
+		
+		for (int i = 62; i >=0; i--) {
+			int status = (int) (numbGen & ((long)1<<(long)i));
+			if (status>0) {
+				usingCells = calculateTwoGen(usingCells, 1<<i);
+			}
+		}
+		
+		return usingCells;
+	}
+	
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		
 		int cells = sc.nextInt();
-		int gens = sc.nextInt();
+		long gens = sc.nextLong();
 		sc.nextLine();
 		String line = sc.nextLine();
 		
 		SR52016V2 game = new SR52016V2(cells, gens, line);
+		int[] print = game.run();
+		for (int i: print) {
+			System.out.print(i);
+		}
 		sc.close();
 	}
 
