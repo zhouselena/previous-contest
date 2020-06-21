@@ -29,21 +29,21 @@ public class SR52016V2 {
 		return cells;
 	}
 	
-	public int[] calculateTwoGen(int[] zero, int gens) {
+	public int[] calculateTwoGen(int[] zero, long gens) {
 		
 		for (int i = 0; i < numbCells; i++) {
 			
-			int indBefore = (i-gens)%numbCells;
+			long indBefore = (i-gens)%numbCells;
 			if (indBefore<0) {
 				indBefore += numbCells;
 			}
-			int indAfter = (i+gens)%numbCells;
+			long indAfter = (i+gens)%numbCells;
 			
 			/* 2 = 0 before, 1 now
 			 * 3 = 1 before, 0 now */
 			
-			int valueBefore = zero[indBefore]%2;
-			int valueAfter = zero[indAfter]%2;
+			int valueBefore = zero[(int)indBefore]%2;
+			int valueAfter = zero[(int)indAfter]%2;
 			
 			int now = valueBefore^valueAfter;
 			
@@ -63,9 +63,8 @@ public class SR52016V2 {
 		int[] usingCells = this.values;
 		
 		for (int i = 62; i >=0; i--) {
-			int status = (int) (numbGen & ((long)1<<(long)i));
-			if (status>0) {
-				usingCells = calculateTwoGen(usingCells, 1<<i);
+			if ((numbGen & ((long)1<<(long)i))!=0) {
+				usingCells = calculateTwoGen(usingCells, 1l<<i);
 			}
 		}
 		
