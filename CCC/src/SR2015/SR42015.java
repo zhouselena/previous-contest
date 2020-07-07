@@ -15,7 +15,7 @@ public class SR42015 {
 			this.wear = w;
 		}
 	}
-	
+	//
 	public int hullOg = 0;
 	public int numbIsland = 0;
 	public int numbRoute = 0;
