@@ -10,9 +10,12 @@ public class SR42015 {
 		
 		public int[] costs;
 		public int self;
-		public int parent;
+		public int[] parents;
+		public boolean[] visited;
 		
 		public Island(int weight, int self) {
+			this.parents = new int[weight];
+			this.visited = new boolean[weight];
 			this.costs = new int[weight];
 			for (int i = 0; i < weight; i++) {
 				costs[i] = Integer.MAX_VALUE;
@@ -66,7 +69,7 @@ public class SR42015 {
 	public void startAndEnd(int start, int end) {
 		this.startIsland = start;
 		calculate[startIsland].costs[0] = 0;
-		calculate[startIsland].parent = startIsland;
+		calculate[startIsland].parents[0] = startIsland;
 		this.endIsland = end;
 	}
 	
@@ -75,26 +78,43 @@ public class SR42015 {
 		this.routes[to].add(new Route(from, to, time, cost));
 	}
 	
+	private void visit(int parentIndex, int prevCost, int prevDistance) {
+		
+		for (int i = 0; i < routes[parentIndex].size(); i++) {
+			Route currentRoute = routes[parentIndex].get(i);
+			Island currentIsland = calculate[currentRoute.to];
+			if (currentRoute.cost+prevCost > this.hullInitial) {
+				continue;
+			}
+			else if (currentIsland.costs[currentRoute.cost+prevCost] > currentRoute.distance+prevDistance) {
+				currentIsland.costs[currentRoute.cost+prevCost] = currentRoute.distance + prevDistance;
+				currentIsland.parents[currentRoute.cost+prevCost] = parentIndex;
+			}
+		}
+		
+		// when to mark visited??
+		
+	}
+	
 	public void run() {
 		
 		Island parent = calculate[startIsland];
-		Island current = null;
 		
-		while(current.self != endIsland) {
+		for (int k = 0; k < this.hullInitial; k++) {
 			
-			int lowestDist = Integer.MAX_VALUE;
-			
+			int minimum = Integer.MAX_VALUE;
+			Island toVisit = null;
 			for (int i = 0; i < routes[parent.self].size(); i++) {
-				Route currentRoute = routes[startIsland].get(i);
-				current = calculate[currentRoute.to];
-				if (currentRoute.cost > this.hullInitial) {
+				Island current = calculate[routes[parent.self].get(i).to];
+				if (!current.visited[k]) {
 					continue;
 				}
-				else if (current.costs[currentRoute.cost] > currentRoute.distance) {
-					current.costs[currentRoute.cost] = currentRoute.distance;
+				else if (current.costs[k] < minimum) {
+					minimum = current.costs[k];
+					toVisit = calculate[current.self];
 				}
 			}
-			
+			visit(toVisit.self, k, toVisit.costs[k]);
 		}
 		
 	}
