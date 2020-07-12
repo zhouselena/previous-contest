@@ -106,25 +106,30 @@ public class SR42015 {
 				
 		for (int k = 0; k < this.hullInitial; k++) {
 			
-			int minimum = Integer.MAX_VALUE;
-			Island toVisit = null;
+			int minimum = 0;
 			
-			// find which next point to visit
-			for (int i = 0; i < calculate.length; i++) {
-				Island current = calculate[i];
-				if (current.visited[k]) {
+			while (minimum < Integer.MAX_VALUE) {
+				
+				minimum = Integer.MAX_VALUE;
+				Island toVisit = null;
+
+				// find which next point to visit
+				for (int i = 0; i < calculate.length; i++) {
+					Island current = calculate[i];
+					if (current.visited[k]) {
+						continue;
+					}
+					else if (current.costs[k] < minimum) {
+						minimum = current.costs[k];
+						toVisit = calculate[current.self];
+					}
+				}
+				if (minimum==Integer.MAX_VALUE) {
 					continue;
 				}
-				else if (current.costs[k] < minimum) {
-					minimum = current.costs[k];
-					toVisit = calculate[current.self];
+				else {
+					visit(toVisit.self, k, toVisit.costs[k]);
 				}
-			}
-			if (minimum==Integer.MAX_VALUE) {
-				continue;
-			}
-			else {
-				visit(toVisit.self, k, toVisit.costs[k]);
 			}
 			
 		}
