@@ -15,6 +15,9 @@ public class SR42015 {
 		
 		public Island(int weight, int self) {
 			this.parents = new int[weight];
+			for (int i = 0; i < weight; i++) {
+				parents[i] = -1;
+			}
 			this.visited = new boolean[weight];
 			this.costs = new int[weight];
 			for (int i = 0; i < weight; i++) {
@@ -64,6 +67,9 @@ public class SR42015 {
 			calculate[i] = new Island(hull, i);
 		}
 		this.routes = new ArrayList[routes];
+		for (int i = 0; i < routes; i++) {
+			this.routes[i] = new ArrayList<Route>();
+		}
 	}
 	
 	public void startAndEnd(int start, int end) {
@@ -83,7 +89,7 @@ public class SR42015 {
 		for (int i = 0; i < routes[parentIndex].size(); i++) {
 			Route currentRoute = routes[parentIndex].get(i);
 			Island currentIsland = calculate[currentRoute.to];
-			if (currentRoute.cost+prevCost > this.hullInitial) {
+			if (currentRoute.cost+prevCost >= this.hullInitial) {
 				continue;
 			}
 			else if (currentIsland.costs[currentRoute.cost+prevCost] > currentRoute.distance+prevDistance) {
@@ -92,21 +98,21 @@ public class SR42015 {
 			}
 		}
 		
-		// when to mark visited??
+		calculate[parentIndex].visited[prevCost] = true;
 		
 	}
 	
 	public void run() {
-		
-		Island parent = calculate[startIsland];
-		
+				
 		for (int k = 0; k < this.hullInitial; k++) {
 			
 			int minimum = Integer.MAX_VALUE;
 			Island toVisit = null;
-			for (int i = 0; i < routes[parent.self].size(); i++) {
-				Island current = calculate[routes[parent.self].get(i).to];
-				if (!current.visited[k]) {
+			
+			// find which next point to visit
+			for (int i = 0; i < calculate.length; i++) {
+				Island current = calculate[i];
+				if (current.visited[k]) {
 					continue;
 				}
 				else if (current.costs[k] < minimum) {
@@ -114,7 +120,28 @@ public class SR42015 {
 					toVisit = calculate[current.self];
 				}
 			}
-			visit(toVisit.self, k, toVisit.costs[k]);
+			if (minimum==Integer.MAX_VALUE) {
+				continue;
+			}
+			else {
+				visit(toVisit.self, k, toVisit.costs[k]);
+			}
+			
+		}
+		
+		int time = Integer.MAX_VALUE;
+		
+		for (int i: calculate[endIsland].costs) {
+			if (i < time) {
+				time = i;
+			}
+		}
+		
+		if (time==Integer.MAX_VALUE) {
+			System.out.println(-1);
+		}
+		else {
+			System.out.println(time);
 		}
 		
 	}
@@ -135,7 +162,7 @@ public class SR42015 {
 			sc.nextLine();
 		}
 		
-		game.startAndEnd(sc.nextInt(), sc.nextInt());
+		game.startAndEnd(sc.nextInt()-1, sc.nextInt()-1);
 		game.run();
 		
 		sc.close();
