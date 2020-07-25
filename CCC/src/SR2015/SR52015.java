@@ -20,16 +20,16 @@ public class SR52015 {
 	
 	public int maxPies() {
 		
-		maxNPies[N-1] = nPies[N-1];
-		maxNPies[N-2] = nPies[N-1]>nPies[N-2]?nPies[N-1]:nPies[N-2];
+		maxNPies[0] = nPies[0];
+		maxNPies[1] = nPies[0]>=nPies[1]?nPies[0]:nPies[1];
 		
-		for (int i = N-3; i >=0; i--) {
-			int firstandlast = nPies[i] + maxNPies[i+2];
-			int second = maxNPies[i+1];
-			maxNPies[i] = firstandlast>second?firstandlast:second;
+		for (int i = 2; i < N; i++) {
+			int firstandlast = nPies[i] + maxNPies[i-2];
+			int second = maxNPies[i-1];
+			maxNPies[i] = firstandlast>=second?firstandlast:second;
 		}
 		
-		return maxNPies[0];
+		return maxNPies[N-1];
 	}
 	
 	public void run() {
