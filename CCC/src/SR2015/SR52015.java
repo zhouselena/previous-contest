@@ -6,6 +6,7 @@ public class SR52015 {
 	
 	public int N = 0;
 	public int[] nPies = null;
+	public int[] maxNPies = null;
 	public int M = 0;
 	public int[] mPies = null;
 		
@@ -13,26 +14,26 @@ public class SR52015 {
 		this.N = n.length;
 		this.M = m.length;
 		this.nPies = n;
+		this.maxNPies = new int[N];
 		this.mPies = m;
 	}
 	
-	public int maxPies(int[] pies, int startPoint) {
-		if (startPoint >= pies.length) {
-			return 0;
+	public int maxPies() {
+		
+		maxNPies[N-1] = nPies[N-1];
+		maxNPies[N-2] = nPies[N-1]>nPies[N-2]?nPies[N-1]:nPies[N-2];
+		
+		for (int i = N-3; i >=0; i--) {
+			int firstandlast = nPies[i] + maxNPies[i+2];
+			int second = maxNPies[i+1];
+			maxNPies[i] = firstandlast>second?firstandlast:second;
 		}
-		else if (startPoint == pies.length-1) {
-			return pies[pies.length-1];
-		}
-		int first = maxPies(pies, startPoint+1);
-		int second = pies[startPoint] + maxPies(pies, startPoint+2);
-		return first>second?first:second;
+		
+		return maxNPies[0];
 	}
 	
 	public void run() {
-		
-		int max = maxPies(nPies, 0);
-		System.out.println(max);
-		
+		System.out.println(maxPies());
 	}
 	
 	public static void main(String[] args) {
