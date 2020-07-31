@@ -18,8 +18,14 @@ public class SR52015 {
 		this.nPies = n;
 		Arrays.sort(m);
 		this.mPies = m;
-		this.master = new int[N][2][M+2][M+2];
-		Arrays.fill(master, -1);
+		this.master = new int[N+1][2][M+2][M+2];
+		for (int[][][] a: master) {
+			for (int[][] b: a) {
+				for (int[] fill:b) {
+					Arrays.fill(fill, -1);
+				}
+			}
+		}
 	}
 	
 	public int maxPies(int position, int take, int left, int right) {
@@ -29,20 +35,28 @@ public class SR52015 {
 		if (ret!=-1) {
 			return ret;
 		}
+		
+		//System.out.println(position);
 		if (position==N) {
-			if (left<right) {
+			if (left<=right) {
 				if (take==1) {
-					ret = mPies[right] + maxPies(position, 0, left, right-1);
+					ret = mPies[right-1] + maxPies(position, 0, left, right-1);
+					master[position][take][left][right] = ret;
 					return ret;
 				}
 				ret = maxPies(position, 1,left+1, right);
+				master[position][take][left][right] = ret;
 				return ret;
+			}
+			else {
+				master[position][take][left][right] = 0;
+				return 0;
 			}
 		}
 		if (take==1) {
 			ret = Math.max(maxPies(position, 0, left, right), (nPies[position]+maxPies(position+1, 0, left, right)));
 			if (left <= right) {
-				ret = Math.max(ret, mPies[right]+maxPies(position, 0, left, right-1));
+				ret = Math.max(ret, mPies[right-1]+maxPies(position, 0, left, right-1));
 			}
 		}
 		else {
@@ -51,12 +65,13 @@ public class SR52015 {
 				ret = Math.max(ret, maxPies(position, 1, left+1, right));
 			}
 		}
+		master[position][take][left][right] = ret;
 		return ret;
 		
 	}
 	
 	public void run() {
-		System.out.println(maxPies(1, 1, 1, M)); //wait am i using 0 or not
+		System.out.println(maxPies(0, 1, 1, M));
 	}
 	
 	public static void main(String[] args) {
