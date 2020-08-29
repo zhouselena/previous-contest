@@ -1,8 +1,8 @@
 package SR2014;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class SR42014 {
@@ -40,7 +40,7 @@ public class SR42014 {
 	int maxX = 0;
 	int maxY = 0;
 	ArrayList<Line> glassLines = null;
-	int[] y = null;
+	HashMap<Integer, Integer> y = null;
 	
 	public SR42014(int N, int t) {
 		this.numbGlasses = N;
@@ -74,7 +74,7 @@ public class SR42014 {
 	public int run() {
 		
 		Collections.sort(glassLines);
-		this.y = new int[this.maxY];
+		this.y = new HashMap<Integer, Integer>();
 		
 		int area = 0;
 		
@@ -83,12 +83,15 @@ public class SR42014 {
 				Line line = glassLines.get(l);
 				if (line.x==i) {
 					for (int yCoord = line.y1; yCoord <= line.y2; yCoord++) {
-						y[yCoord] += line.tint;
+						if (y.containsKey(yCoord))
+							y.replace(yCoord, y.get(yCoord)+line.tint);
+						else
+							y.put(yCoord, line.tint);
 					}
 				}
 			}
-			for (int yCoord: y) {
-				if (yCoord >= this.threshold) {
+			for (int yCoord: y.keySet()) {
+				if (y.get(yCoord) >= this.threshold) {
 					area++;
 				}
 			}
