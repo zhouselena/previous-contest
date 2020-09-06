@@ -75,29 +75,33 @@ public class SR42014 {
 		
 		Collections.sort(glassLines);
 		this.y = new HashMap<Integer, Integer>();
-		
-		int area = 0;
-		
-		for (int i = 0; i < this.maxX; i++) {
-			for (int l = 0; l < glassLines.size(); l++) {
-				Line line = glassLines.get(l);
-				if (line.x==i) {
-					for (int yCoord = line.y1; yCoord <= line.y2; yCoord++) {
-						if (y.containsKey(yCoord))
-							y.replace(yCoord, y.get(yCoord)+line.tint);
-						else
-							y.put(yCoord, line.tint);
+				
+		int totalArea = 0;
+		int lastLine = 0;
+		for (int i=0;i<glassLines.size();i++) {
+			Line line = glassLines.get(i);
+			if (lastLine!=line.x) {
+				
+				int lastLineArea = 0 ;
+				for (int yCoord: y.keySet()) {
+					if (y.get(yCoord) >= this.threshold) {
+						lastLineArea++;
 					}
 				}
+				
+				totalArea += ((line.x - lastLine)*lastLineArea) ;
+				lastLine =  line.x;
 			}
-			for (int yCoord: y.keySet()) {
-				if (y.get(yCoord) >= this.threshold) {
-					area++;
-				}
+			for (int yCoord = line.y1; yCoord <= line.y2; yCoord++) {
+				if (y.containsKey(yCoord))
+					y.replace(yCoord, y.get(yCoord)+line.tint);
+				else
+					y.put(yCoord, line.tint);
 			}
+			
 		}
 		
-		return area;
+		return totalArea;
 		
 	}
 	
