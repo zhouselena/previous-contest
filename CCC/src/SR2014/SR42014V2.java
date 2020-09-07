@@ -35,7 +35,7 @@ public class SR42014V2 {
 		
 	}
 	
-	public static class Y {
+	public static class Y implements Comparable<Y> {
 		
 		int index = 0;
 		int tint = 0;
