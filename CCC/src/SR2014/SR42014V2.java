@@ -2,8 +2,9 @@ package SR2014;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class SR42014V2 {
 	
@@ -46,17 +47,19 @@ public class SR42014V2 {
 		}
 		
 		public int compareTo(Y arg0) {
-			if (index == arg0.index) {
-				if (tint > 0) {
-					return -1;
-				}
-				else if (arg0.tint > 0){
-					return 1;
-				}
-			}
 			return index - arg0.index;
 		}
 		
+		@Override
+	    public boolean equals(Object obj) {
+			if (this==obj)
+				return true;
+			if (obj == null || obj.getClass()!= this.getClass()) 
+	           return false;
+			
+			return this.index == ((Y)obj).index ;
+		}
+	    
 	}
 	
 	int numbGlasses = 0;
@@ -65,14 +68,14 @@ public class SR42014V2 {
 	int maxY = 0;
 	
 	ArrayList<Line> glassLines = null;
-	ArrayList<Y> yline = null;
+	Set<Y> yline = null;
 	
 	public SR42014V2(int N, int t) {
 		this.numbGlasses = N;
 		this.threshold = t;
 		this.maxX = 0;
 		this.glassLines = new ArrayList<Line>();
-		this.yline = new ArrayList<Y>();
+		this.yline = new TreeSet<Y>();
 	}
 	
 	public void addGlass(int x1, int y1, int x2, int y2, int tint) {
@@ -90,84 +93,64 @@ public class SR42014V2 {
 			maxY = y1;
 		}
 		
-		Line first = new Line(x1, y1, y2-1, tint);
+		Line first = new Line(x1, y1, y2, tint);
 		this.glassLines.add(first);
-		Line second = new Line(x2, y1, y2-1, tint*(-1));
+		Line second = new Line(x2, y1, y2, tint*(-1));
 		this.glassLines.add(second);
 		
 		Y temp = new Y(y1);
-		if (!yline.contains(temp)) {
-			yline.add(temp);
-		}
+		yline.add(temp);
 		
-		temp = new Y(y2-1);
-		if (!yline.contains(temp)) {
-			yline.add(temp);
-		}
-		
+		temp = new Y(y2);
+		yline.add(temp);
 	}
 	
 	public void addToLines(int y1, int y2, int tint) {
-		for (int i = 0; i < yline.size(); i++) {
-			Y temp = yline.get(i);
-			if (temp.index>=y1 && temp.index<y2) {
-				temp.tint += tint;
-			}
+		
+		for (Y y: yline) {
+			if (y.index < y1) continue ;
+			if (y.index >= y2) break;
+			
+			y.tint += tint;
 		}
 	}
 	
-	public int findMax() {
+	public long findMax() {
 		
-		int y1 = -1;
-		int y2 = -1;
+		long count = 0 ;
+		int previousY = 0;
+		boolean found = false ;
 		
-		int cont = 0;
-		for (int i = 0; i < yline.size(); i++) {
-			if (yline.get(i).tint >= this.threshold) {
-				y1 = yline.get(i).index;
-				cont = i;
-				break;
+		for(Y y : yline) {
+			if (found) {
+				count += (y.index-previousY);
+				found = false ;
 			}
+			previousY = y.index;
+			if (y.tint >= this.threshold)
+				found = true;
 		}
 		
-		for (int i = cont; cont < yline.size(); i++) {
-			if (yline.get(i).tint < this.threshold) {
-				y2 = yline.get(i).index;
-				break;
-			}
-		}
-		
-		if (y1==-1) {
-			return 0;
-		}
-		if (y2==-1) {
-			return (maxY - yline.get(y1).index);
-		}
-		
-		return y2-y1;
-		
+		return count;
 	}
 	
-	public int run() {
+	public long run() {
 		
 		Collections.sort(glassLines);
-		Collections.sort(yline);
 		
-		int totalArea = 0;
+		long totalArea = 0;
+		int lastLine = 0 ;
 		
-		for (int i = 0; i < maxX; i++) {
-			
-			for (int j = 0; j < glassLines.size(); j++) {
-				Line line = glassLines.get(j);
-				if (line.x==i) {
-					addToLines(line.y1, line.y2, line.tint);
-				}
+		for (int i=0;i<glassLines.size();i++) {
+			Line line = glassLines.get(i);
+			if (lastLine!=line.x) {
+				
+				totalArea += ((line.x - lastLine)*findMax()) ;
+				lastLine =  line.x;
 			}
-			totalArea += findMax();
 			
+			addToLines(line.y1,line.y2, line.tint);
 		}
-		
-		
 		return totalArea;
 		
 	}
