@@ -22,7 +22,7 @@ public class SR52014 {
 		}
 		
 		public int compareTo(Distance arg0) {
-			return (int) (arg0.dist - dist);
+			return (int) (dist - arg0.dist);
 		}
 		
 	}
@@ -55,46 +55,30 @@ public class SR52014 {
 	
 	public int run() {
 		
-		boolean startfound = false;
 		for (int i = 0; i < distances.size(); i++) {
 			
 			Distance current = distances.get(i);
 			
+			if (d[current.a] != current.dist) {
+				d[current.a] = current.dist;
+				prev[current.a] = treats[current.a];
+			}
+			if (d[current.b] != current.dist) {
+				d[current.b] = current.dist;
+				prev[current.b] = treats[current.b];
+			}
+			
 			if (current.a==0) {
-				startfound = true;
+				treats[current.a] = Math.max(treats[current.a], treats[current.b]);
 			}
-			
-			if (startfound) {
-				if (d[current.a] != current.dist) {
-					d[current.a] = current.dist;
-					prev[current.a] = treats[current.a];
-				}
-				if (d[current.b] != current.dist) {
-					d[current.b] = current.dist;
-					prev[current.b] = treats[current.b];
-				}
-				
-				if (current.a==0) {
-					treats[current.a] = Math.max(prev[current.a], prev[current.b]);
-				}
-				else {
-					treats[current.a] = Math.max(prev[current.a], prev[current.b]+1);
-				}
-				treats[current.b] = Math.max(prev[current.b], prev[current.a]+1);
+			else {
+				treats[current.a] = Math.max(treats[current.a], prev[current.b]+1);
+				treats[current.b] = Math.max(treats[current.b], prev[current.a]+1);
 			}
 			
 		}
-		
-		int max = 0;
-		
-		for (int i = 0; i < treats.length; i++) {
-			if (treats[i]>max) {
-				max = treats[i];
-			}
-		}
-		
-		return max;
-		
+	
+		return treats[0] + 1;
 	}
 	
 	public static void main(String[] args) {
