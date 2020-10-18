@@ -27,6 +27,9 @@ public class SR42013 {
     private Queue<Integer> points = new LinkedList<>();
     private Set<Integer> visited = new HashSet<Integer>();
     private int BFS(int start, int find) {
+    	
+    	points.clear();
+    	visited.clear();
     	points.add(start);
     	
     	while (!points.isEmpty()) {
