@@ -1,9 +1,11 @@
 package SR2013;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.Set;
 
 public class SR42013 {
 	
@@ -23,16 +25,21 @@ public class SR42013 {
 	}
 	
     private Queue<Integer> points = new LinkedList<>();
+    private Set<Integer> visited = new HashSet<Integer>();
     private int BFS(int start, int find) {
     	points.add(start);
     	
     	while (!points.isEmpty()) {
     		ArrayList<Integer> current = heights[points.poll()];
     		for (int child: current) {
+    			if (visited.contains(child)) {
+    				continue;
+    			}
     			if (child==find) {
     				return 1;
     			}
     			points.add(child);
+    			visited.add(child);
     		}
     	}
     	
