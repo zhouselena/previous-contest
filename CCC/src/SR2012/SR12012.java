@@ -9,27 +9,25 @@ public class SR12012 {
 		Scanner sc = new Scanner(System.in);
 		
 		int jersey = sc.nextInt();
-		int count = 0;
-		int i = 1;
 		
-		while (i < 33) {
-			
-			int current = jersey;
-			for (int j = 0; j < 3; j++) {
-				current -= i;
-			}
-			
-			if (current > 0)
-				count++;
+		if (jersey <= 7) {
+			if (jersey == 7)
+				System.out.println(20);
+			else if (jersey == 6)
+				System.out.println(10);
+			else if (jersey == 5)
+				System.out.println(4);
+			else if (jersey == 4)
+				System.out.println(1);
 			else
-				break;
-			
-			i++;
-			
+				System.out.println(0);
+		}
+		else {
+			int count = (jersey-1)*(jersey-2)*(jersey-3);
+			count /= 6;
+			System.out.println(count);
 		}
 		
-		System.out.println(count);
-
 		sc.close();
 	}
 
