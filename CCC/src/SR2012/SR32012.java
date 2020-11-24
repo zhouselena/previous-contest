@@ -2,11 +2,12 @@ package SR2012;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class SR32012 {
 
-	public static int maximum (ArrayList<Integer> list) {
+	public static int maximum (List<Integer> list) {
 		
 		int max = 0;
 		
@@ -21,7 +22,7 @@ public class SR32012 {
 		
 	}
 	
-	public static int minimum (ArrayList<Integer> list) {
+	public static int minimum (List<Integer> list) {
 		
 		int min = Integer.MAX_VALUE;
 		
