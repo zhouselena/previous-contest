@@ -11,21 +11,6 @@ import java.util.TreeSet;
 
 public class SR42012 {
 
-	/*
-	 * represent positions and numbers in 1x8bit byte, using 1 & 0 in each bit
-	 * 
-	 * start with original position
-	 * find end result by shifting (?)
-	 * 
-	 * begin with original position
-	 * check each two side by side bytes to see if one can stack left/right on next position
-	 * if can, push new position + level (# move) into queue
-	 * mark current position as visited, if any of the positions are equal to result then return
-	 * when done pushing all possible positions, do the same thing with the positions in queue
-	 * if queue is empty and result was not found, then impossible
-	 * 
-	 */
-	
 	public final int N;
 	public ByteBuffer original = null;
 	
@@ -99,20 +84,16 @@ public class SR42012 {
 							byte jminusPos = (byte) (add.get(j-1) + (1 << smallestJ));
 							add.put(j, jPos);
 							add.put(j-1, jminusPos);
-							if (!visited.contains(add.getLong(0))) {
-								upNext.add(add.getLong(0));
-								moves.put(add.getLong(0), moves.get(curr)+1);
-							}
+							upNext.add(add.getLong(0));
+							moves.put(add.getLong(0), moves.get(curr)+1);
 						}
 						else if (smallestJ > smallestJMinus) {
 							byte jPos = (byte) (add.get(j) + (1 << smallestJMinus));
 							byte jminusPos = (byte) (add.get(j-1) - (1 << smallestJMinus));
 							add.put(j, jPos);
 							add.put(j-1, jminusPos);
-							if (!visited.contains(add.getLong(0))) {
-								upNext.add(add.getLong(0));
-								moves.put(add.getLong(0), moves.get(curr)+1);
-							}
+							upNext.add(add.getLong(0));
+							moves.put(add.getLong(0), moves.get(curr)+1);
 						}
 					}
 				}
