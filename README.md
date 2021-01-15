@@ -1,3 +1,6 @@
 # Contest Code and Practice
 
-> test
+> Repository for all my contest code practice.
+
+Includes: CCC
+Notes: Find languages in the README of respective folders.
