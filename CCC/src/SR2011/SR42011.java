@@ -15,39 +15,68 @@ public class SR42011 {
 		else bloodUnits[0] = 0;
 		
 		// A blood
+		count += Math.min(bloodUnits[1], pats[1]);
+		if (bloodUnits[1] > pats[1]) {
+			bloodUnits[1] -= pats[1];
+			pats[1] = 0;
+		}
+		else {
+			pats[1] -= bloodUnits[1];
+			bloodUnits[1] = 0;
+		}
 		count += Math.min(bloodUnits[0], pats[1]);
 		if (bloodUnits[0] > pats[1])
 			bloodUnits[0] -= pats[1];
 		else bloodUnits[0] = 0;
-		count += Math.min(bloodUnits[1], pats[1]);
-		if (bloodUnits[1] > pats[1])
-			bloodUnits[1] -= pats[1];
-		else bloodUnits[1] = 0;
 		
 		
 		// B blood
+		count += Math.min(bloodUnits[2], pats[2]);
+		if (bloodUnits[2] > pats[2]) {
+			bloodUnits[2] -= pats[2];
+			pats[2] = 0;
+		}
+		else {
+			pats[2] -= bloodUnits[2];
+			bloodUnits[2] = 0;
+		}
 		count += Math.min(bloodUnits[0], pats[2]);
 		if (bloodUnits[0] > pats[2])
 			bloodUnits[0] -= pats[2];
 		else bloodUnits[0] = 0;
-		count += Math.min(bloodUnits[2], pats[2]);
-		if (bloodUnits[2] > pats[2])
-			bloodUnits[2] -= pats[2];
-		else bloodUnits[2] = 0;
 		
 		// AB blood
+		count += Math.min(bloodUnits[1], pats[3]);
+		if (bloodUnits[1] > pats[3]) {
+			bloodUnits[1] -= pats[3];
+			pats[3] = 0;
+		}
+		else {
+			pats[3] -= bloodUnits[1];
+			bloodUnits[1] = 0;
+		}
+		count += Math.min(bloodUnits[2], pats[3]);
+		if (bloodUnits[2] > pats[3]) {
+			bloodUnits[2] -= pats[3];
+			pats[3] = 0;
+		}
+		else {
+			pats[3] -= bloodUnits[2];
+			bloodUnits[2] = 0;
+		}
+		count += Math.min(bloodUnits[3], pats[3]);
+		if (bloodUnits[3] > pats[3]) {
+			bloodUnits[3] -= pats[3];
+			pats[3] = 0;
+		}
+		else {
+			pats[3] -= bloodUnits[3];
+			bloodUnits[3] = 0;
+		}
 		count += Math.min(bloodUnits[0], pats[3]);
 		if (bloodUnits[0] > pats[3])
 			bloodUnits[0] -= pats[3];
 		else bloodUnits[0] = 0;
-		count += Math.min(bloodUnits[1], pats[3]);
-		if (bloodUnits[1] > pats[3])
-			bloodUnits[1] -= pats[3];
-		else bloodUnits[1] = 0;
-		count += Math.min(bloodUnits[2], pats[3]);
-		if (bloodUnits[2] > pats[3])
-			bloodUnits[2] -= pats[3];
-		else bloodUnits[2] = 0;
 		
 		return count;
 		
