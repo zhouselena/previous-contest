@@ -46,6 +46,15 @@ public class SR42011 {
 		else bloodUnits[0] = 0;
 		
 		// AB blood
+		count += Math.min(bloodUnits[3], pats[3]);
+		if (bloodUnits[3] > pats[3]) {
+			bloodUnits[3] -= pats[3];
+			pats[3] = 0;
+		}
+		else {
+			pats[3] -= bloodUnits[3];
+			bloodUnits[3] = 0;
+		}
 		count += Math.min(bloodUnits[1], pats[3]);
 		if (bloodUnits[1] > pats[3]) {
 			bloodUnits[1] -= pats[3];
@@ -63,15 +72,6 @@ public class SR42011 {
 		else {
 			pats[3] -= bloodUnits[2];
 			bloodUnits[2] = 0;
-		}
-		count += Math.min(bloodUnits[3], pats[3]);
-		if (bloodUnits[3] > pats[3]) {
-			bloodUnits[3] -= pats[3];
-			pats[3] = 0;
-		}
-		else {
-			pats[3] -= bloodUnits[3];
-			bloodUnits[3] = 0;
 		}
 		count += Math.min(bloodUnits[0], pats[3]);
 		if (bloodUnits[0] > pats[3])
