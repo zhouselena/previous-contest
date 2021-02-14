@@ -1,6 +1,5 @@
 package SR2010;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -121,20 +120,19 @@ public class SR42010 {
 		
 		int totalCost = MST(n, pens);
 		
-		if (totalCost==Integer.MAX_VALUE) {
-			for (int i = 0; i < 1000; i++) {
-				for (int j = i+1; j < 1000; j++) {
-					GateInfo currentGate = gates[i][j];
-					if (currentGate!=null && currentGate.pen!=-1) {
-						pens[n][currentGate.pen] = currentGate.cost;
-						pens[currentGate.pen][n] = pens[n][currentGate.pen];
-					}
+		for (int i = 0; i < 1000; i++) {
+			for (int j = i+1; j < 1000; j++) {
+				GateInfo currentGate = gates[i][j];
+				if (currentGate!=null && currentGate.pen!=-1) {
+					pens[n][currentGate.pen] = currentGate.cost;
+					pens[currentGate.pen][n] = pens[n][currentGate.pen];
 				}
 			}
-			totalCost = MST(n, pens);
 		}
 		
-		System.out.println(totalCost);
+		int outsideCost = MST(n, pens);
+		
+		System.out.println(Math.min(totalCost, outsideCost));
 		
 	}
 
