@@ -111,8 +111,10 @@ public class SR42010 {
 				}
 				else {
 					GateInfo currentGate = gates[vertices[j]][vertices[(j+1)%numbVertices]];
+					if (pens[i][currentGate.pen]==0 || pens[i][currentGate.pen] > costs[j]) {
 					pens[i][currentGate.pen] = costs[j];
 					pens[currentGate.pen][i] = pens[i][currentGate.pen];
+					}
 					currentGate.pen = -1;
 				}
 			}
@@ -124,8 +126,10 @@ public class SR42010 {
 			for (int j = i+1; j < 1000; j++) {
 				GateInfo currentGate = gates[i][j];
 				if (currentGate!=null && currentGate.pen!=-1) {
+					if (pens[n][currentGate.pen]==0 || pens[n][currentGate.pen] > currentGate.cost) {
 					pens[n][currentGate.pen] = currentGate.cost;
 					pens[currentGate.pen][n] = pens[n][currentGate.pen];
+					}
 				}
 			}
 		}
