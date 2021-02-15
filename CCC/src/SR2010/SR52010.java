@@ -113,7 +113,7 @@ public class SR52010 {
 		Stack<Node> stk = new Stack<>();
 		Node current = null;
 		int pos = 0;
-		Set<Character> dict = new HashSet<>(Arrays.asList(' ', '(', ')'));
+		//Set<Character> dict = new HashSet<>(Arrays.asList(' ', '(', ')'));
 
 		while (pos < info.length()) {
 			if (info.charAt(pos) == ' ') {
@@ -136,7 +136,7 @@ public class SR52010 {
 				pos++;
 			} else {
 				int indTo = pos;
-				while (indTo < info.length() && !dict.contains(info.charAt(indTo))) {
+				while (indTo < info.length() && info.charAt(indTo)>='0' && info.charAt(indTo)<='9') {
 					indTo++;
 				}
 				int numb = Integer.parseInt(info.substring(pos, indTo));
