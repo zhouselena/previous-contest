@@ -95,6 +95,7 @@ public class SR42017V3 {
 		pipes.add(new Pipe(build1, build2, cost, active));
 	}
 	
+	// minimum spanning tree
 	public int findMinDays() {
 		int days = 0;
 		Collections.sort(pipes);
@@ -112,6 +113,7 @@ public class SR42017V3 {
 			}
 		}
 		
+		// add consideration for cost enhancer if last pipe is non-active
 		if (!lastPipe.active && lastPipe.cost<=D) {
 			Forest f2 = new Forest(N);
 			for (Pipe pipe: pipes) {
