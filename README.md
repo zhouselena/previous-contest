@@ -1,6 +1,6 @@
-# 2019 TO 2022 Contest Code and Practice
+# 2019 TO 2021 Contest Code and Practice
 
-> **PREVIOUS** Repository for all my contest code practice.
+> **PREVIOUS + INCOMPLETE** Repository for all my contest code practice.
 
 Includes: CCC
 
