@@ -6,4 +6,4 @@ Includes: CCC
 
 Notes: Find languages in the README of respective folders.
 
-* No longer in use. *
+*_No longer in use._
