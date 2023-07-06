@@ -1,3 +1,4 @@
+# *** ARCHIVED ***
 # 2019 TO 2021 Contest Code and Practice
 
 > **PREVIOUS + INCOMPLETE** Repository for all my contest code practice.
